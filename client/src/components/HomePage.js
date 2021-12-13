@@ -49,8 +49,15 @@ const HomePage = () => {
                     <Form />
                 ):( 
                     existUser && status === "idle" ? (
-                    <h2>Your Daily Calorie is: {userData.dailyCalorie}.</h2>):(<></>)
-                )}
+                        <>
+                            <Content>
+                            <H2>According your information, </H2><br/>
+                            <H2>Your Daily Calorie is: {userData.dailyCalorie}.</H2>
+                                <H2>Please select your daily plan</H2>
+                            </Content>
+                        </>
+                        ):(<></>)
+                        )}
             </Div>):(
                 <Div>
                     <h1>You must login first.</h1>
@@ -59,14 +66,26 @@ const HomePage = () => {
         </>
     );
 };
+const Content = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
+    margin-top: 150px;
+`;
+
 const Div = styled.div`
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    margin-top: 0px;
+    margin-top: 10px;
     top: 90px;
     margin-left: 0px;
-    width: 100% - 150px;
+    width: 100%;
+`;
+const H2 = styled.h2`
+    margin-top: 10px;
 `;
 
 export default HomePage;

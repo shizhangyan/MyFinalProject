@@ -6,9 +6,10 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const { getRecipe, getMealImg, 
         getRecipeByNutrients, 
-        getRecipeByCuisine, 
+        getRecipeByCuisine, getRecipeById,
         addUserInformation, getUserByUsername,
-        getUserByEmail } = require("./handlers.js/handlers");
+        getUserByEmail, getRecipeByIngredients,
+        updateUserInformation } = require("./handlers.js/handlers");
 
 const PORT = 8000;
 const app = express()
@@ -37,12 +38,16 @@ app.get("/hello", (req,res)=>{
     res.status(200).json({hi: "hi"});
 })
 app.get("/recipe/:calories", getRecipe);
+app.get("/recipes/:_id", getRecipeById);
 app.get("/mealimage/:mealId", getMealImg);
-app.get("/recipebynutrients", getRecipeByNutrients);
-app.get("/recipebycuisine", getRecipeByCuisine);
+app.get("/recipe/bynutrients/:nutrients", getRecipeByNutrients);
+app.get("/recipe/bycuisine/:cuisine", getRecipeByCuisine);
+app.get("/recipe/byingredients/:ingredients",getRecipeByIngredients)
+//
 app.post("/user", addUserInformation);
 app.get("/user/:username", getUserByUsername);
 app.get("/user/email/:email", getUserByEmail);
+app.patch("/user/updateuser/:_id", updateUserInformation);
 //EndPoint end here
 
 app.listen(PORT, () => console.info(`Listening on port ${PORT}`));

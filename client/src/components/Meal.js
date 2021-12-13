@@ -9,6 +9,8 @@ const Meal = ({meal}) =>{
 
         setImageUrl(json.image);
     },[meal.id]);
+    console.log(meal);
+    console.log(imageUrl);
     return(
         <Article>
             <h5>{meal.title}</h5>

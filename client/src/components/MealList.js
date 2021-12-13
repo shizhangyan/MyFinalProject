@@ -8,10 +8,10 @@ const MealList = ({mealData}) =>{
             <Section className="nutrients">
                 <H1>Macros</H1>
                 <UL>
-                <li>Calories: {nutrients.calories.toFixed(0)}</li>
-                <li>Carbohydrates: {nutrients.carbohydrates}</li>
-                <li>Fat: {nutrients.fat}</li>
-                <li>Protein: {nutrients.protein}</li>
+                <li>Calories: {nutrients?.calories.toFixed(0)}</li>
+                <li>Carbohydrates: {nutrients?.carbohydrates}</li>
+                <li>Fat: {nutrients?.fat}</li>
+                <li>Protein: {nutrients?.protein}</li>
                 </UL>
             </Section>
         </Main>

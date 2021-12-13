@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import Meal from "./Meal";
 import MealList from "./MealList";
 import { useAuth0 } from "@auth0/auth0-react";
+import { UserContext } from "./UserContext";
 
 const GetData = () => {
     const { isAuthenticated } = useAuth0();
+    const { userData } = useContext(UserContext);
 
     const [mealData, setMealData] = useState(null);
     const [calories, setCalories] = useState(2000);
@@ -29,7 +31,7 @@ const GetData = () => {
             <SectionControl className="controls">
                 <Input
                 type="number"
-                placeholder="Calories (e.g. 2000)"
+                placeholder={`${userData?.dailyCalorie}`}
                 onChange={handleChange}
                 />
                 <Button onClick={getMeadData}>Get Daily Meal</Button>
@@ -37,15 +39,13 @@ const GetData = () => {
             </SectionControl>
             <Section className="meals">
                 {mealData &&
-                mealData.meals.map((meal) => {
+                mealData.meals?.map((meal) => {
                     return <Meal key={meal.id} meal={meal} />;
                 })}
             </Section>
-
-            
         </Wrapper>):(
             <Div>
-                You must login first!
+                <H2>You must login first!</H2>
             </Div>
         )}
         </>
@@ -55,10 +55,13 @@ const Div = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 50px;
+    margin-top: 10px;
     top: 90px;
-    margin-left: 250px;
-    width: 100% - 250px;
+    margin-left: 0px;
+    width: 100%;
+`;
+const H2 = styled.h2`
+    margin-top: 10px;
 `;
 const Button = styled.button`
     padding: 0.5rem 1rem;
@@ -80,7 +83,7 @@ const Input = styled.input`
     margin-bottom: 1rem;
 `;
 const Wrapper = styled.div`
-    margin: 0;
+    margin-left: 0px;
     padding: 0;
     font-family: "Roboto", sans-serif;
     background-color: #f3f3f3;

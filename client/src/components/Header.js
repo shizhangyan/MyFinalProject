@@ -1,13 +1,16 @@
 import React from "react";
+import { Link  } from "react-router-dom";
 import styled from "styled-components";
 import Login from "./Login/Login";
 import Logout from "./Login/Logout";
 import Logo from "../assets/logo.png"
 import BackgroundImg from "../assets/mealplan.jpg"
 
+
 const Header = () =>{
 
     return(
+        <>
         <Wrapper>
             <LogoImg src={Logo} />
 
@@ -16,8 +19,62 @@ const Header = () =>{
                 <Logout />
             </RightNavGroup>
         </Wrapper>
+        <LinksContainer>
+            <LinkItem>
+                <StyledLink to="/" >
+                    Home
+                </StyledLink>
+            </LinkItem>
+            <LinkItem>
+                <StyledLink to="/plan" >
+                    Daily Plan
+                </StyledLink>
+            </LinkItem>
+            <LinkItem>
+                <StyledLink to="/fridge" >
+                    My fridge
+                </StyledLink>
+            </LinkItem>
+            <LinkItem>
+                <StyledLink to="/cuisine" >
+                    Cuisine
+                </StyledLink>
+            </LinkItem>
+            <LinkItem>
+                <StyledLink to="/profile" >
+                    Profile
+                </StyledLink>
+            </LinkItem>
+            <LinkItem>
+                <StyledLink to="/about" >
+                    About
+                </StyledLink>
+            </LinkItem>
+
+        </LinksContainer>
+        </>
     );
 };
+
+const LinksContainer = styled.span`
+    width: 100%;
+    display: flex;
+    padding: 10px 10vw;
+    justify-content: center;
+    list-style: none;
+    border-top: 1px solid #d1d1d1;
+`;
+const LinkItem = styled.div``;
+
+const StyledLink = styled(Link)`
+    text-transform: capitalize;
+    padding: 0 10px;
+    margin: 0 5px;
+    text-decoration: none;
+    color: black;
+    opacity: 0.8;
+    transition: 0.5s;
+`;
 const LogoImg = styled.img`
     height: 78px;
     width: auto;
