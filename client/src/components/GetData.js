@@ -7,23 +7,58 @@ import { UserContext } from "./UserContext";
 
 const GetData = () => {
     const { isAuthenticated } = useAuth0();
-    const { userData } = useContext(UserContext);
+    const { userData, dailyMeal, setDailyMeal,enableButton, setEnableButton } = useContext(UserContext);
+    // const [ enableButton, setEnableButton] = useState(false);
 
     const [mealData, setMealData] = useState(null);
     const [calories, setCalories] = useState(2000);
-
+    console.log(dailyMeal);
     const handleChange = (ev) => {
         setCalories(ev.target.value);
     };
-    const getMeadData = async () => {
+    // get meal data from server
+    const getMealData = async () => {
         console.log("Get Data From Server");
 
         const res = await fetch(`/recipe/${calories}`);
         const json = await res.json();
         setMealData(json.data);
+        const { nutrients, meals } = json.data;
+        console.log(nutrients);
+        setDailyMeal({...dailyMeal, 
+            calories:nutrients?.calories, 
+            protein:nutrients?.protein, 
+            fat: nutrients?.fat, 
+            carbohydrates: nutrients?.carbohydrates});
+        setEnableButton(true);
     };
-
-
+    // save daily meal data to database
+    const saveMealData = () => {
+        console.log(dailyMeal);
+        console.log("Save Daily Meal");
+        if(!mealData){
+            alert("Get Daily Meal First");
+        }
+        console.log(dailyMeal);
+        fetch("/api/dailymeal",{
+            method: "POST",
+            body:  JSON.stringify(dailyMeal),
+            headers: {
+                Accept:"application/json",
+                "Content-Type": "application/json",
+            },
+        })
+        .then((res) => res.json())
+        .then((json) => {
+            console.log("Success");
+        })
+        .catch((err)=>{
+            console.log(err);
+        })    
+        setEnableButton(false);    
+    };
+    console.log(mealData);
+    console.log(dailyMeal);
     return (
         <>
         { isAuthenticated ?(
@@ -34,13 +69,16 @@ const GetData = () => {
                 placeholder={`${userData?.dailyCalorie}`}
                 onChange={handleChange}
                 />
-                <Button onClick={getMeadData}>Get Daily Meal</Button>
+                <ButtonContainer>
+                    <Button onClick={getMealData}>Get Daily Meal</Button>
+                    <Button disabled={!enableButton} onClick={saveMealData}  >Save Daily Meal</Button>
+                </ButtonContainer>
                 {mealData && <MealList mealData={mealData} />}
             </SectionControl>
             <Section className="meals">
                 {mealData &&
-                mealData.meals?.map((meal) => {
-                    return <Meal key={meal.id} meal={meal} />;
+                mealData.meals?.map((meal, index) => {
+                    return <Meal key={meal.id} meal={meal} dailyMeal={dailyMeal.meals[index]}/>;
                 })}
             </Section>
         </Wrapper>):(
@@ -63,6 +101,12 @@ const Div = styled.div`
 const H2 = styled.h2`
     margin-top: 10px;
 `;
+const ButtonContainer = styled.div`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+`;
+
 const Button = styled.button`
     padding: 0.5rem 1rem;
     background-color: #7f21eb;
@@ -71,12 +115,32 @@ const Button = styled.button`
     font-family: "Roboto", sans-serif;
     font-size: 1rem;
     border-radius: 5px;
+    margin: 0 10px;
+    &:hover {
+        cursor: pointer;
+        background-color: #6a0fd3;
+    };
+    &: disabled {
+        background-color: #a8a8a8;
+    }
+`;
+const Button1 = styled.button`
+    padding: 0.5rem 1rem;
+    background-color: #7f21eb;
+    color: #f3f3f3;
+    border: none;
+    font-family: "Roboto", sans-serif;
+    font-size: 1rem;
+    border-radius: 5px;
+    margin: 0 10px;
     &:hover {
         cursor: pointer;
         background-color: #6a0fd3;
     }
+    &:disabled {
+        background-color: #a8a8a8;
+    }
 `;
-
 const Input = styled.input`
     text-align: center;
     padding: 0.5rem;
