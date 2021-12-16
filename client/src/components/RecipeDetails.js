@@ -24,8 +24,8 @@ const RecipeDetails = () => {
 
     return (
         <Wrapper>
-            <H2>{recipeDetails.title}</H2>
-            <img src={recipeDetails.image} />
+            <H2>{recipeDetails?.title}</H2>
+            <img src={recipeDetails?.image} />
             <H2>Ingredients Details</H2>
             <Grid>
             { recipeDetails &&

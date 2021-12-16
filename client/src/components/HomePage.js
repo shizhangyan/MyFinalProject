@@ -7,52 +7,45 @@ import { UserContext } from "./UserContext";
 
 const HomePage = () => {
     const { user, isAuthenticated, isLoading } = useAuth0();
-    const { existUser, setExistUser, userData, setUserData, dailyMealInfo, 
-            enableButton, setEnableButton,setDailyMealInfo } = useContext(UserContext);
-    const [status, setStatus] = useState("loading");
-    // const [enableButton, setEnableButton] = useState(false);
-    // const [dailyMealInfo, setDailyMealInfo] = useState(null);
+    const { existUser,status, userData, enableButton, setEnableButton,setDailyMealInfo } = useContext(UserContext);
 
-    const getUserInformation = () =>{
-        if( user ){
-            fetch(`/user/${user?.nickname}`)
-            .then((res)=> res.json())
-            .then((data)=>{
-                if(data.success){
-                    setExistUser(true);
-                    setUserData(data.data);
-                    console.log("The user already exist!");
-                } else{
-                    setExistUser(false);
-                    console.log("This is a new user")
-                }
-                setStatus("idle");
-            })
-            .catch((err)=>{
-                setExistUser(false);
-                console.log("New User")
-            })             
-        }
-    };
-    const getDailyMealInfo = () =>{
-        if( existUser ){
-            fetch("/api/dailymeal/")
+    const [recentDailyMeal, setRecentDailyMeal] = useState(null);
+
+    let theArr = [];
+    console.log(userData?.username);
+
+    const getDailyMealInfo = async () =>
+    {
+        {                     
+            console.log(userData?.username);
+            await fetch(`/api/dailymeal/${userData?.username}`)
             .then((res) => res.json())
             .then((data)=>{
-                setDailyMealInfo(data.data);
+                setDailyMealInfo(data.data);                                                                                                        
+                console.log(data);
+                if( data.data !== []){
+                    let len = 0;
+                    for(let i = data.data.length - 1; i >= 0; i--){
+                        theArr.push(data?.data[i]);
+                        len += 1;
+                        if( len === 3) break;
+                    }
+                    // theArr.push(data?.data[len-3]);
+                    // theArr.push(data?.data[len-2]);
+                    // theArr.push(data?.data[len-1]);    
+                    setRecentDailyMeal(theArr);                     
+                }
             })
             .catch((err)=>{
                 console.log(err);
             })
         }
-    };
-
+    }
     useEffect(()=>{
-        getUserInformation();
         getDailyMealInfo();
-    },[isAuthenticated]);
+    },[existUser]);
 
-    if( isLoading && status === "loading"){
+    if( isLoading ){
         return <LoadingSpinner />
     }
 
@@ -74,42 +67,41 @@ const HomePage = () => {
         }) 
         setEnableButton(true);
     };
-
-    const len = dailyMealInfo?.length;
-    let theArr = [];
-    if( dailyMealInfo !== null ){
-        theArr.push(dailyMealInfo[len-3]);
-        theArr.push(dailyMealInfo[len-2]);
-        theArr.push(dailyMealInfo[len-1]);
-    }
-
+    console.log("Exist User ? ", existUser);
+    console.log(recentDailyMeal);
     return(
         <>
             { isAuthenticated ? (
             <Div>
                 {/* <h1>Welcome to my HomePage</h1> */}
-                { !existUser && status ==="idle" ?(
+                { !existUser ?(
                     <Form />
                 ):( 
-                    existUser && status === "idle" ? (
+                    recentDailyMeal !== null ? (
                         <>
-                            <Content>
-                            <H4>According your information, Your Daily Calorie is: {userData.dailyCalorie}.</H4>
-                                <H4>Your recent 3 Day's Meal Plan is: </H4>
-                            </Content>
+                            {   recentDailyMeal.length !== 0 ?(
+                                <Content>
+                                    <H4>According your information, Your Daily Calorie is: {userData.dailyCalorie}.</H4>
+                                    <H4>Your recent {recentDailyMeal.length} Day's Meal Plan is: </H4>                            
+                                </Content>
+                            ):(
+                                <Content>
+                                <H4>According your information, Your Daily Calorie is: {userData.dailyCalorie}.</H4>
+                                <H4>Please start choosing your daily plan.</H4>
+                                </Content>
+                            )}
                             <Wrapper>
-                                {   theArr?.map((item,index) =>{
+                                {   recentDailyMeal?.map((item,index) =>{
                                 return(
-                                <Container>
-                                    <Button onClick={()=>handleClick(index)} disabled={enableButton}>Choose Again</Button>
+                                <Container len ={recentDailyMeal.length}>
                                     <NutriDiv>
-                                        <ItemName>Calories: {item?.calories}</ItemName>
-                                        <ItemName>Carbohyd: {item?.carbohydrates}</ItemName>
-                                        <ItemName>Fat: {item?.fat}</ItemName>
-                                        <ItemName>Protein: {item?.protein}</ItemName>
+                                        <ItemName>Calories: {item?.calories.toFixed(2)}</ItemName>
+                                        <ItemName>Carbohyd: {item?.carbohydrates.toFixed(2)}</ItemName>
+                                        <ItemName>Fat: {item?.fat.toFixed(2)}</ItemName>
+                                        <ItemName>Protein: {item?.protein.toFixed(2)}</ItemName>
                                     </NutriDiv>
                                     {                                        
-                                    item.meals.map((meal)=>{
+                                    item?.meals.map((meal)=>{
                                         return(
                                         <MealDiv>
                                             <Image src={meal?.image} alt={meal?.title} />
@@ -118,12 +110,12 @@ const HomePage = () => {
                                             <ItemName>servings:{meal?.servings}</ItemName>                                            
                                         </MealDiv>)
                                     })}
+                                    <Button onClick={()=>handleClick(index)} disabled={enableButton}>Choose Again</Button>
                                 </Container>   )                             
                             })                            
                             }</Wrapper>
                         </>
                         ):(<></>)
-
                         )}
             </Div>):(
                 <Div>
@@ -142,12 +134,12 @@ const Button = styled.button`
     font-size: 1rem;
     border-radius: 5px;
     margin: 10px 10px;
-    margin-left: 150px;
+    margin-left: 100px;
     &:hover {
         cursor: pointer;
         background-color: #6a0fd3;
     };
-    &: disabled {
+    &:disabled {
         background-color: #a8a8a8;
     }
 `;
@@ -164,35 +156,35 @@ const ItemName = styled.span`
     color: #383838;
     font-weight: bold;
 `;
-const P = styled.p`
-    width: 33%;
-`;
 
 const Image = styled.img`
     width: 300px;
 `;
 const NutriDiv = styled.div`
-    width: 33%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: start;
+    width: 100%;
+    margin: 20px;
 `;
 
 const MealDiv = styled.div`
-    width: 33%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: start;
+    width: 100%;
+    margin: 20px;
 `;
 
 const Container = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: center;
-    width: 33%;
+    align-items: start;
+    /* width: 33%; */
+    width: ${(props) =>( props.len === 1 ? "100%" : props.len === 2 ? "50%" : "33%")};
 `;
 const Content = styled.div`
     display: flex;

@@ -11,7 +11,7 @@ import { UserContext } from '../UserContext';
 
 const Form = () => {
     const { user, isAuthenticated } = useAuth0();
-    const { userData, setUserData } = useContext(UserContext);
+    const { userData, setUserData, existUser, setExistUser } = useContext(UserContext);
     const [page, setPage] = useState(0);
     const FormTitles = ["What is your goal", "What is your activity level?", "About you"];
     const [formData, setFormData] = useState(initialState);
@@ -48,10 +48,27 @@ const Form = () => {
                 setFormData({...formData, dailyCalorie: theAgeArr[0].calories[2]});
             }
         }
+        if( formData.gender === "Female" ){
+            const theAgeArr = caloriesByWoman.filter((item)=>{
+                return ( formData.age >= item.ageRange[0] && formData.age <= item.ageRange[1]);
+            });
+            if( formData.activity === "Not very active"){
+                formData.dailyCalorie = theAgeArr[0].calories[0];
+                setFormData({...formData, dailyCalorie: theAgeArr[0].calories[0]});
+            } else if( formData.activity === "Lightly Active"){
+                formData.dailyCalorie = theAgeArr[0].calories[1];
+                setFormData({...formData, dailyCalorie: theAgeArr[0].calories[1]});
+            } else if( formData.activity === "Active"){
+                formData.dailyCalorie = theAgeArr[0].calories[2];
+                setFormData({...formData, dailyCalorie: theAgeArr[0].calories[2]});
+            }
+        }
+
     }
     const submitForm = () =>{
         calculateCalories();
         setUserData(formData);
+        setExistUser(true);
         fetch("/user",{
             method: "POST",
             body:  JSON.stringify(formData),

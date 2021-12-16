@@ -13,7 +13,6 @@ const Header = () =>{
         <>
         <Wrapper>
             <LogoImg src={Logo} />
-
             <RightNavGroup>
                 <Login />
                 <Logout />
@@ -57,11 +56,14 @@ const Header = () =>{
 };
 
 const LinksContainer = styled.span`
+    top: 90px;
     width: 100%;
     display: flex;
     padding: 10px 10vw;
     justify-content: center;
     list-style: none;
+    position: sticky;
+    z-index: 50;
     border-top: 1px solid #d1d1d1;
 `;
 const LinkItem = styled.div``;
@@ -90,7 +92,7 @@ const Wrapper = styled.div`
     background: #060b26;
     color: #fff;
     font-family: "roboto", sans-serif;
-    /* position: sticky; */
+    position: sticky;
     background-image: url(${BackgroundImg});
     background-size: auto;
     /* background-repeat: round; */

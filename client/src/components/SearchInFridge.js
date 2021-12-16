@@ -32,8 +32,9 @@ function SearchInFridge() {
                     }</Div3>
                     <Div2>
                     <h4>Unused Ingredients: {recipe.unusedIngredients?.length}</h4>
-                    {   recipe.unusedIngredients?.length > 1 && 
-                        (recipe.unusedInngredients?.map((item)=>{
+                    {
+                        recipe.unusedIngredients?.length >= 1 && 
+                        (recipe.unusedIngredients?.map((item)=>{
                             return(
                                 <>
                                     <img src={item.image} alt={item.id} />
@@ -41,13 +42,6 @@ function SearchInFridge() {
                                 </>
                             )
                         }))
-                    }
-                    {
-                        recipe.unusedIngredients?.length === 1 &&
-                        (   <>
-                            <img src={recipe.unusedIngredients[0].image} />
-                            <p>{recipe.unusedIngredients[0].name}</p>
-                            </>)
                     }
                     </Div2>
                     <Div4>

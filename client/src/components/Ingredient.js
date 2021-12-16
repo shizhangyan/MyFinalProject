@@ -5,9 +5,9 @@ const Ingredient = ({meal}) =>{
 
     return(
         <ItemBox>
-            <ItemName>{meal.name}</ItemName>
             <Image src={`https://spoonacular.com/cdn/ingredients_100x100/${meal.image}`} alt="recipe" />
             <TextDiv>
+                <ItemName>{meal.name}</ItemName>
                 <ItemName>{meal.original}</ItemName>
             </TextDiv>
         </ItemBox>

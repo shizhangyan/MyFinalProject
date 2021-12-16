@@ -1,11 +1,11 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
-import { goalOption, activityOption } from '../components/Login/Settings'
+import { goalOption, activityOption, initialState } from '../components/Login/Settings'
 
 function Profile() {
     const { user, isAuthenticated } = useAuth0();
-    const [profile, setProfile] = useState(null);
+    const [profile, setProfile] = useState(initialState);
 
     console.log(user?.email);
     useEffect(()=>{

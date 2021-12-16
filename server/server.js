@@ -9,7 +9,10 @@ const { getRecipe, getMealImg,
         getRecipeByCuisine, getRecipeById,
         addUserInformation, getUserByUsername,
         getUserByEmail, getRecipeByIngredients,
-        updateUserInformation } = require("./handlers.js/handlers");
+        updateUserInformation, 
+        addDailyMeal,
+        getDailyMeal,
+        getNutritionById} = require("./handlers.js/handlers");
 
 const PORT = 8000;
 const app = express()
@@ -43,11 +46,16 @@ app.get("/mealimage/:mealId", getMealImg);
 app.get("/recipe/bynutrients/:nutrients", getRecipeByNutrients);
 app.get("/recipe/bycuisine/:cuisine", getRecipeByCuisine);
 app.get("/recipe/byingredients/:ingredients",getRecipeByIngredients)
+app.get("/nutrition/:id", getNutritionById);
 //
 app.post("/user", addUserInformation);
 app.get("/user/:username", getUserByUsername);
 app.get("/user/email/:email", getUserByEmail);
 app.patch("/user/updateuser/:_id", updateUserInformation);
+
+//
+app.post("/api/dailymeal", addDailyMeal);
+app.get("/api/dailymeal/:username", getDailyMeal);
 //EndPoint end here
 
 app.listen(PORT, () => console.info(`Listening on port ${PORT}`));

@@ -117,6 +117,21 @@ const getRecipeByIngredients = async (req, res) =>{
 
 }
 
+// get recipe's nutrition by ID
+const getNutritionById = async (req, res) =>{
+    const { id } = req.params;
+    const url =`https://api.spoonacular.com/recipes/${id}/nutritionWidget.json?apiKey=${API_KEY}`;
+    const options = {
+        "method":"GET",
+    };
+    const response = await fetch( url, options )
+            .then((res)=>res.json())
+            .catch(()=>{
+                console.log("error");
+            });
+    // console.log(response);
+    res.status(200).json({status: 200, data: response});
+}
 // mongoDB functions
 const addUserInformation = async (req, res) =>{
 
@@ -206,6 +221,56 @@ const updateUserInformation = async (req, res) =>{
     res.status(200).json({status: 200, success: true});
     client.close();    
 };
-module.exports = { getRecipe, getMealImg, getRecipeByNutrients, 
+// add user's dail meal information
+const addDailyMeal = async ( req, res ) => {
+    const client = new MongoClient(MONGO_URI, options);
+    await client.connect();
+    try{
+        const db = client.db('eatgood');
+
+        const _id = uuidv4();
+        const {username, calories, carbohydrates, fat, protein, meals } = req.body;
+        const newValue = {
+                        _id: _id, username,
+                        calories, carbohydrates, fat, protein, meals };
+        console.log(newValue);
+
+        const  result = await db.collection("dailymeal").insertOne(newValue);
+        client.close();
+        if( result ){
+            res.status(201).json({status: 201, data: result, success: true});
+        } else{
+            res.status(404).json({status: 404, success: false});
+        }
+    }
+    catch(err){
+        console.log(err.stack);
+        res.status(500).json({status: 500, data: result, message: err.message});
+    } 
+};
+// get user's dail meal information
+const getDailyMeal = async ( req, res ) => {
+    const { username } = req.params;
+    console.log(username);
+    const client = new MongoClient(MONGO_URI, options);
+    await client.connect();
+    try{
+        const db = client.db('eatgood');
+
+        const  result = await db.collection("dailymeal").find({username}).toArray();
+        console.log(result);
+        client.close();
+        if( result ){
+            res.status(201).json({status: 201, data: result, success: true});
+        } else{
+            res.status(404).json({status: 404, success: false});
+        }
+    }
+    catch(err){
+        console.log(err.stack);
+        res.status(500).json({status: 500, data: result, message: err.message});
+    }   
+}
+module.exports = { getRecipe, getMealImg, getRecipeByNutrients, getNutritionById,
     getRecipeByCuisine, getRecipeById, addUserInformation, getUserByUsername,
-    getUserByEmail, getRecipeByIngredients, updateUserInformation };
+    getUserByEmail, getRecipeByIngredients, updateUserInformation, addDailyMeal, getDailyMeal };

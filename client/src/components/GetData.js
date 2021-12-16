@@ -12,10 +12,11 @@ const GetData = () => {
 
     const [mealData, setMealData] = useState(null);
     const [calories, setCalories] = useState(2000);
-    console.log(dailyMeal);
+    // console.log(dailyMeal);
     const handleChange = (ev) => {
         setCalories(ev.target.value);
     };
+    // console.log(userData.username);
     // get meal data from server
     const getMealData = async () => {
         console.log("Get Data From Server");
@@ -24,7 +25,9 @@ const GetData = () => {
         const json = await res.json();
         setMealData(json.data);
         const { nutrients, meals } = json.data;
-        console.log(nutrients);
+        // console.log(nutrients);
+        dailyMeal.username = userData.username;
+            // usrname: userData?.username,
         setDailyMeal({...dailyMeal, 
             calories:nutrients?.calories, 
             protein:nutrients?.protein, 
@@ -34,12 +37,12 @@ const GetData = () => {
     };
     // save daily meal data to database
     const saveMealData = () => {
-        console.log(dailyMeal);
-        console.log("Save Daily Meal");
+        // console.log(dailyMeal);
+        // console.log("Save Daily Meal");
         if(!mealData){
             alert("Get Daily Meal First");
         }
-        console.log(dailyMeal);
+        // console.log(dailyMeal);
         fetch("/api/dailymeal",{
             method: "POST",
             body:  JSON.stringify(dailyMeal),
@@ -57,8 +60,8 @@ const GetData = () => {
         })    
         setEnableButton(false);    
     };
-    console.log(mealData);
-    console.log(dailyMeal);
+    // console.log(mealData);
+    // console.log(dailyMeal);
     return (
         <>
         { isAuthenticated ?(
@@ -120,7 +123,7 @@ const Button = styled.button`
         cursor: pointer;
         background-color: #6a0fd3;
     };
-    &: disabled {
+    &:disabled {
         background-color: #a8a8a8;
     }
 `;
